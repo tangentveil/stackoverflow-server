@@ -1,9 +1,16 @@
 import Questions from "../models/AskQuestion.js";
 import mongoose from "mongoose";
+import users from "../models/auth.js";
 
 export const AskQuestion = async (req, res) => {
+  const { id: _id } = req.params;
   const postQuestionData = req.body;
   const postQuestion = new Questions(postQuestionData);
+
+  if (!mongoose.Types.ObjectId.isValid(_id)) {
+    return res.status(404).send("question unavailable..");
+  }
+  // updateSubscription(_id, nOfQuestionPerDay);
 
   try {
     await postQuestion.save();
@@ -11,6 +18,25 @@ export const AskQuestion = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(409).json("Couldn't post a new question");
+  }
+};
+
+export const updateSubscription = async (req, res) => {
+  const { id: _id } = req.params;
+  
+  if (!mongoose.Types.ObjectId.isValid(_id)) {
+    return res.status(404).send("question unavailable..");
+  }
+
+  try {
+    await users.findByIdAndUpdate(_id, {
+      $set: { nOfQuestionPerDay: nOfQuestionPerDay },
+    });
+
+    // console.log(updatedSubscription);
+    res.status(200).json("Posted a question successfully");
+  } catch (error) {
+    console.log(error);
   }
 };
 
