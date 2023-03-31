@@ -4,9 +4,9 @@ import {
   getAllUsers,
   updateProfile,
   Following,
-  followerPost,
   userDetails,
-  Alluser
+  Alluser,
+  updateSubscription,
 } from "../controllers/Users.js";
 import auth from "../middlewares/auth.js";
 import authP from "../middlewares/authP.js";
@@ -18,9 +18,9 @@ router.post("/login", login);
 router.get("/getAllUsers", getAllUsers);
 router.patch("/update/:id", auth, updateProfile);
 router.put("/following/:id",authP, Following);
-router.get("/flw/:id",authP, followerPost);
 router.get('/post/user/details/:id', userDetails)
 router.get("/all/user/:id", Alluser)
+router.put("/updateSub/:id", updateSubscription)
 
 
 // router.get("/search", friendSearch);

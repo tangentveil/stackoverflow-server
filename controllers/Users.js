@@ -1,23 +1,9 @@
 import mongoose from "mongoose";
 import User from "../models/auth.js";
-import Post from '../models/Post.js'
+import Post from "../models/Post.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    // const allUsers = await User.find();
-    // console.log(allUsers)
-    // const allUsersDetails = [];
-    // allUsers.map(user => {
-    //   allUsersDetails.push({
-    //     name,
-    //     about,
-    //     tags,
-    //     nOfQuestionPerDay,
-    //     joinedOn,
-    //   });
-
-    //   res.status(200).json(allUsersDetails);
-
     const allUser = await User.find();
     const user = await Promise.all(
       allUser.map((item) => {
@@ -42,7 +28,7 @@ export const updateProfile = async (req, res) => {
   try {
     const updatedProfile = await User.findByIdAndUpdate(
       _id,
-      { $set: { 'name': name, 'about': about, 'tags': tags } },
+      { $set: { name: name, about: about, tags: tags } },
       { new: true }
     );
 
@@ -69,24 +55,6 @@ export const Following = async (req, res) => {
     }
   } else {
     return res.status(400).json("You can't follow yourself");
-  }
-};
-
-
-// Fetch post from follower
-export const followerPost = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    const followersPost = await Promise.all(
-      user.Following.map((item) => {
-        return Post.find({ user: item });
-      })
-    );
-    const userPost = await Post.find({ user: user._id });
-
-    res.status(200).json(userPost.concat(...followersPost));
-  } catch (error) {
-    return res.status(500).json("Internal server error");
   }
 };
 
@@ -123,19 +91,25 @@ export const Alluser = async (req, res) => {
     });
 
     // can't add "name" here
-     let filteruser = await Promise.all(
+    let filteruser = await Promise.all(
       UserToFollow.map((item) => {
-        const {
-          email,
-          Followers,
-          Following,
-          password,
-          ...others
-        } = item._doc;
+        const { email, Followers, Following, password, ...others } = item._doc;
         return others;
       })
     );
 
     res.status(200).json(filteruser);
   } catch (error) {}
+};
+
+export const updateSubscription = async (req, res) => {
+  try {
+    const updateSub = await User.findByIdAndUpdate(req.params.id, {
+      nOfQuestionPerDay: nOfQuestionPerDay,
+    });
+    console.log(updateSub);
+    return res.status(200).json(updateSub);
+  } catch (error) {
+    return res.status(500).json("Internal server error");
+  }
 };

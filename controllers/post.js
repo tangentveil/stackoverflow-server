@@ -33,24 +33,6 @@ export const getPost = async (req, res) => {
   }
 };
 
-// update user post
-export const putPost = async (req, res) => {
-  try {
-    let post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(400).json("Post does not found");
-    }
-
-    post = await Post.findByIdAndUpdate(req.params.id, {
-      $set: req.body,
-    });
-    let updatepost = await post.save();
-    res.status(200).json(updatepost);
-  } catch (error) {
-    return res.status(500).json("Internal error occured");
-  }
-};
-
 // Like
 export const likePost = async (req, res) => {
   try {
@@ -116,16 +98,7 @@ export const Comment = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    // console.log(post.user)
-    // console.log(req.params.id)
-    // console.log(req.user.id);
-    // if (post.user === req.user.id) {
-    //   const deletepost = await Post.findByIdAndDelete(req.params.id);
-    //   return res.status(200).json("You post has been deleted");
-    // } else {
-    //   return res.status(400).json("You are not allow to delete this post");
-    // }
-    
+
     const deletepost = await Post.findByIdAndDelete(req.params.id);
     return res.status(200).json("You post has been deleted");
   } catch (error) {
@@ -135,21 +108,25 @@ export const deletePost = async (req, res) => {
 
 // get a following user
 export const following = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  const followinguser = await Promise.all(
-    user.Following.map((item) => {
-      return User.findById(item);
-    })
-  );
+  try {
+    const user = await User.findById(req.params.id);
+    const followinguser = await Promise.all(
+      user.Following.map((item) => {
+        return User.findById(item);
+      })
+    );
 
-  let followingList = [];
-  followinguser.map((person) => {
-    const { name, email, password, Following, Followers, ...others } =
-      person._doc;
-    followingList.push(others);
-  });
+    let followingList = [];
+    followinguser.map((person) => {
+      const { name, email, password, Following, Followers, ...others } =
+        person._doc;
+      followingList.push(others);
+    });
 
-  res.status(200).json(followingList);
+    res.status(200).json(followingList);
+  } catch (error) {
+    return res.status(500).json("Internal server error");
+  }
 };
 
 // get a following user
@@ -164,7 +141,7 @@ export const followers = async (req, res) => {
 
     let followersList = [];
     followersuser.map((person) => {
-      const { name, email, password, Following, Followers, ...others } =
+      const { password, email, Following, Followers, ...others } =
         person._doc;
       followersList.push(others);
     });
@@ -174,7 +151,6 @@ export const followers = async (req, res) => {
     return res.status(500).json("Internal server error");
   }
 };
-
 
 // Fetch All posts
 export const allPosts = async (req, res) => {

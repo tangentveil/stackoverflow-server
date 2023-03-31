@@ -5,7 +5,6 @@ import authP from "../middlewares/authP.js";
 import {
   postData,
   getPost,
-  putPost,
   likePost,
   dislikePost,
   Comment,
@@ -17,7 +16,6 @@ import {
 
 router.post("/user/post", authP, postData);
 router.get("/get/post/:id", getPost);
-router.put("/update/post/:id", putPost);
 router.put("/:id/like", authP, likePost);
 router.put("/:id/dislike", authP, dislikePost);
 router.put("/comment/post", authP, Comment);

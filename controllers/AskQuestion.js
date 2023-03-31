@@ -3,14 +3,9 @@ import mongoose from "mongoose";
 import users from "../models/auth.js";
 
 export const AskQuestion = async (req, res) => {
-  const { id: _id } = req.params;
   const postQuestionData = req.body;
-  const postQuestion = new Questions(postQuestionData);
+  const postQuestion = new Questions({...postQuestionData, userId: req.userId});
 
-  if (!mongoose.Types.ObjectId.isValid(_id)) {
-    return res.status(404).send("question unavailable..");
-  }
-  // updateSubscription(_id, nOfQuestionPerDay);
 
   try {
     await postQuestion.save();
@@ -21,24 +16,6 @@ export const AskQuestion = async (req, res) => {
   }
 };
 
-export const updateSubscription = async (req, res) => {
-  const { id: _id } = req.params;
-  
-  if (!mongoose.Types.ObjectId.isValid(_id)) {
-    return res.status(404).send("question unavailable..");
-  }
-
-  try {
-    await users.findByIdAndUpdate(_id, {
-      $set: { nOfQuestionPerDay: nOfQuestionPerDay },
-    });
-
-    // console.log(updatedSubscription);
-    res.status(200).json("Posted a question successfully");
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 export const deleteQuestion = async (req, res) => {
   const { id: _id } = req.params;
