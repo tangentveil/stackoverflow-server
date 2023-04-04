@@ -103,13 +103,8 @@ export const Alluser = async (req, res) => {
 };
 
 export const updateSubscription = async (req, res) => {
-  try {
     const updateSub = await User.findByIdAndUpdate(req.params.id, {
-      nOfQuestionPerDay: nOfQuestionPerDay,
+      nOfQuestionPerDay: req.body.nOfQuestionPerDay,
     });
-    console.log(updateSub);
     return res.status(200).json(updateSub);
-  } catch (error) {
-    return res.status(500).json("Internal server error");
-  }
 };
