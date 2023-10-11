@@ -88,6 +88,8 @@ app.get("/payment", (req, res) => {
 app.post("/chat", async (req, res) => {
   const { prompt } = req.body;
 
+  // console.log(prompt);
+
   const completion = await openai.createCompletion({
     model: "text-davinci-003",
     max_tokens: 512,
